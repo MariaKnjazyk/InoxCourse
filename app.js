@@ -27,7 +27,7 @@ function gender(pathF) {
     })
 }
 
-function stat(pathF) {
+async function stat(pathF) {
     return new Promise((resolve, reject) => {
         util.prom.statFSPromise(pathF).then(stats => {
             resolve(stats.isDirectory());
@@ -44,20 +44,21 @@ function moveFilesFromDir(pathDir) {
                 }
 
                 const pathFile = path.join(pathDir, file);
-                if (await stat(pathFile)) {
+                const statFile = await stat(pathFile);
+                if (statFile) {
                     moveFilesFromDir(pathFile);
                 } else {
                     const gend = await gender(pathFile);
                     if (gend) {
                         const newPathFile = path.join(__dirname, gend, file);
-                        move(pathFile, newPathFile)
+                        move(pathFile, newPathFile);
                     }
                 }
             }
         } catch (e) {
             console.log(e);
         }
-    })
+    });
 }
 
 moveFilesFromDir(__dirname);
