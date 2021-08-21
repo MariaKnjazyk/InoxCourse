@@ -1,0 +1,6 @@
+{ "mail": "dima@gmail.com", "password": "Pa$$w0rd" },
+{ "mail": "vika@gmail.com", "password": "Pa$$w0rd" },
+{ "mail": "khrystyna@gmail.com", "password": "Pa$$w0rd" },
+{ "mail": "viktor@gmail.com", "password": "Pa$$w0rd" },
+{"mail":"masha@gmail.com","password":"Pa$$w0rd"},
+{"mail":"kolja@gmail.com","password":"Pa$$w0rd"}
