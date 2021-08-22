@@ -28,13 +28,11 @@ fs.readFile(pathUsers, (err, data) => {
     users = JSON.parse('[' + data.toString() + ']');
 })
 
-function validateData(mail, password) {
+function filledFields(mail, password) {
+    return !!(mail && password);
+}
 
-    if (!mail || !password) {
-        // res.status(400).redirect('/error?info=not_all_fields_are_filled');
-        return false;
-    }
-
+function validateMail(mail) {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(mail);
 }
@@ -49,13 +47,21 @@ app.get('/login', (req, res) => {
 
 app.post('/auth', (req, res) => {
     const {mail, password} = req.body;
+
+    const isFilledFields = filledFields(mail, password);
+
+    if(!isFilledFields){
+        res.status(400).redirect('/error?info=not_all_fields_are_filled');
+        return;
+    }
+
     const normMail = mail.toLowerCase().trim();
     const normPass = password.trim();
 
-    const isValidData = validateData(normMail, normPass);
+    const isValidMail = validateMail(normMail);
 
-    if (!isValidData) {
-        res.status(400).redirect('/error?info=not_a_valid_data_or_not_all_fields_are_filled');
+    if (!isValidMail) {
+        res.status(400).redirect('/error?info=not_a_valid_mail');
         return;
     }
 
@@ -77,12 +83,20 @@ app.get('/register', (req, res) => {
 
 app.post('/users', (req, res) => {
     const {mail, password} = req.body;
+
+    const isFilledFields = filledFields(mail, password);
+
+    if(!isFilledFields){
+        res.status(400).redirect('/error?info=not_all_fields_are_filled');
+        return;
+    }
+
     const newUser = {mail: mail.toLowerCase().trim(), password: password.trim()};
 
-    const isValidData = validateData(newUser.mail, newUser.password);
+    const isValidMail = validateMail(newUser.mail);
 
-    if (!isValidData) {
-        res.status(400).redirect('/error?info=not_a_valid_data_or_not_all_fields_are_filled');
+    if (!isValidMail) {
+        res.status(400).redirect('/error?info=not_a_valid_mail');
         return;
     }
 
