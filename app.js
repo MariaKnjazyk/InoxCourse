@@ -32,6 +32,10 @@ function filledFields(mail, password) {
     return !!(mail && password);
 }
 
+function normalizationData(mail, password) {
+    return {normMail: mail.toLowerCase().trim(), normPass: password.trim()};
+}
+
 function validateMail(mail) {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(mail);
@@ -50,13 +54,12 @@ app.post('/auth', (req, res) => {
 
     const isFilledFields = filledFields(mail, password);
 
-    if(!isFilledFields){
+    if (!isFilledFields) {
         res.status(400).redirect('/error?info=not_all_fields_are_filled');
         return;
     }
 
-    const normMail = mail.toLowerCase().trim();
-    const normPass = password.trim();
+    const {normMail, normPass} = normalizationData(mail, password);
 
     const isValidMail = validateMail(normMail);
 
@@ -86,12 +89,13 @@ app.post('/users', (req, res) => {
 
     const isFilledFields = filledFields(mail, password);
 
-    if(!isFilledFields){
+    if (!isFilledFields) {
         res.status(400).redirect('/error?info=not_all_fields_are_filled');
         return;
     }
 
-    const newUser = {mail: mail.toLowerCase().trim(), password: password.trim()};
+    const {normMail, normPass} = normalizationData(mail, password);
+    const newUser = {mail: normMail, password: normPass};
 
     const isValidMail = validateMail(newUser.mail);
 
@@ -108,7 +112,6 @@ app.post('/users', (req, res) => {
     }
 
     users.push(newUser);
-
     fs.appendFile(pathUsers, ',\n' + JSON.stringify(newUser), err => {
         if (err) {
             console.log(err);
