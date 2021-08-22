@@ -28,6 +28,17 @@ fs.readFile(pathUsers, (err, data) => {
     users = JSON.parse('[' + data.toString() + ']');
 })
 
+function validateData(mail, password) {
+
+    if (!mail || !password) {
+        // res.status(400).redirect('/error?info=not_all_fields_are_filled');
+        return false;
+    }
+
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(mail);
+}
+
 app.get('/', (req, res) => {
     res.redirect('/login');
 })
@@ -38,8 +49,17 @@ app.get('/login', (req, res) => {
 
 app.post('/auth', (req, res) => {
     const {mail, password} = req.body;
+    const normMail = mail.toLowerCase().trim();
+    const normPass = password.trim();
 
-    const logUser = users.find(user => user.mail === mail && user.password === password);
+    const isValidData = validateData(normMail, normPass);
+
+    if (!isValidData) {
+        res.status(400).redirect('/error?info=not_a_valid_data_or_not_all_fields_are_filled');
+        return;
+    }
+
+    const logUser = users.find(user => user.mail === normMail && user.password === normPass);
 
     if (logUser) {
         res.redirect(`/users?mail=${logUser.mail}`);
@@ -57,22 +77,25 @@ app.get('/register', (req, res) => {
 
 app.post('/users', (req, res) => {
     const {mail, password} = req.body;
+    const newUser = {mail: mail.toLowerCase().trim(), password: password.trim()};
 
-    if (!mail || !password) {
-        res.status(400).redirect('/error?info=not_all_fields_are_filled');
+    const isValidData = validateData(newUser.mail, newUser.password);
+
+    if (!isValidData) {
+        res.status(400).redirect('/error?info=not_a_valid_data_or_not_all_fields_are_filled');
         return;
     }
 
-    const isReg = users.some(user => user.mail === mail);
+    const isReg = users.some(user => user.mail === newUser.mail);
 
     if (isReg) {
         res.status(400).redirect('/error?info=User_with_such_an_email_already_exists');
         return;
     }
 
-    users.push(req.body);
+    users.push(newUser);
 
-    fs.appendFile(pathUsers, ',\n' + JSON.stringify(req.body), err => {
+    fs.appendFile(pathUsers, ',\n' + JSON.stringify(newUser), err => {
         if (err) {
             console.log(err);
         }
@@ -105,7 +128,6 @@ app.get('/error', (req, res) => {
 
     res.render('error', {info});
 });
-
 
 app.listen(PORT, () => {
     console.log('App listen', PORT);
