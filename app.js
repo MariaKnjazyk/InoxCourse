@@ -8,7 +8,7 @@ const {PORT} = require('./configs/variables');
 const app = express();
 
 const pathStatic = path.join(__dirname, 'static');
-const pathUsers = path.join(__dirname, 'dataBase', 'users.txt')
+const pathUsers = path.join(__dirname, 'dataBase', 'users.json')
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -25,7 +25,7 @@ fs.readFile(pathUsers, (err, data) => {
         return;
     }
 
-    users = JSON.parse('[' + data.toString() + ']');
+    users = JSON.parse(data.toString());
 })
 
 function filledFields(mail, password) {
@@ -37,8 +37,8 @@ function normalizationData(mail, password) {
 }
 
 function validateMail(mail) {
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(mail);
+    const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return regex.test(mail);
 }
 
 app.get('/', (req, res) => {
@@ -112,7 +112,7 @@ app.post('/users', (req, res) => {
     }
 
     users.push(newUser);
-    fs.appendFile(pathUsers, ',\n' + JSON.stringify(newUser), err => {
+    fs.writeFile(pathUsers, JSON.stringify(users), err => {
         if (err) {
             console.log(err);
         }
