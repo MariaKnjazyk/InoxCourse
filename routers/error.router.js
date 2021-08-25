@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const {errorController} = require('../controllers');
+const { errorController } = require('../controllers');
 
 router.get('/', errorController.showInfo);
 

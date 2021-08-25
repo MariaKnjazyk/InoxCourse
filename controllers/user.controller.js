@@ -2,7 +2,7 @@ const {
     filledFields,
     normalizationData,
     validateMail
-} = require("../helpers/data.helper");
+} = require('../helpers/data.helper');
 const {
     getUsersFromFile,
     writeUsersInFile
@@ -21,8 +21,8 @@ module.exports = {
                 return;
             }
 
-            const {normMail, normPass} = normalizationData(mail, password);
-            const newUser = {mail: normMail, password: normPass};
+            const { normMail, normPass } = normalizationData(mail, password);
+            const newUser = { mail: normMail, password: normPass };
 
             const isValidMail = validateMail(newUser.mail);
 
@@ -52,11 +52,11 @@ module.exports = {
 
     getAllUsers: async (req, res) => {
         try {
-            const {mail} = req.query;
+            const { mail } = req.query;
 
             const users = await getUsersFromFile(PATH_USERS);
 
-            res.json({mail, users});
+            res.json({ mail, users });
         } catch (e) {
             res.status(500).json(e.message);
         }

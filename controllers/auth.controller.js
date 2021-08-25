@@ -2,7 +2,7 @@ const {
     filledFields,
     normalizationData,
     validateMail
-} = require("../helpers/data.helper");
+} = require('../helpers/data.helper');
 const { getUsersFromFile } = require('../services/user.service');
 const { PATH_USERS } = require('../configs/variables');
 
@@ -18,7 +18,7 @@ module.exports = {
                 return;
             }
 
-            const {normMail, normPass} = normalizationData(mail, password);
+            const { normMail, normPass } = normalizationData(mail, password);
 
             const isValidMail = validateMail(normMail);
 
@@ -41,4 +41,4 @@ module.exports = {
             res.status(500).json(e.message);
         }
     }
-}
+};
