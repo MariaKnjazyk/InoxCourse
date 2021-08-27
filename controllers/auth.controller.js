@@ -1,44 +1,22 @@
-const {
-    filledFields,
-    normalizationData,
-    validateMail
-} = require('../helpers/data.helper');
-const { getUsersFromFile } = require('../services/user.service');
-const { PATH_USERS } = require('../configs/variables');
+const { statusCodes } = require('../configs');
+const { User } = require('../dataBase');
 
 module.exports = {
-    loginUser: async (req, res) => {
+    loginUser: async (req, res, next) => {
         try {
-            const { mail, password } = req.body;
+            const { email, password } = req.body;
 
-            const isFilledFields = filledFields(mail, password);
+            const user = await User.findOne({ email, password });
 
-            if (!isFilledFields) {
-                res.status(400).redirect('/error?info=not_all_fields_are_filled');
-                return;
-            }
-
-            const { normMail, normPass } = normalizationData(mail, password);
-
-            const isValidMail = validateMail(normMail);
-
-            if (!isValidMail) {
-                res.status(400).redirect('/error?info=not_a_valid_mail');
-                return;
-            }
-
-            const users = await getUsersFromFile(PATH_USERS);
-            const logUser = users.find((user) => user.mail === normMail && user.password === normPass);
-
-            if (logUser) {
-                res.redirect(`/users?mail=${logUser.mail}`);
+            if (!user) {
+                res.status(statusCodes.NOT_FOUND).redirect('/register');
 
                 return;
             }
 
-            res.status(404).redirect('/register?info=user_not_found');
+            res.redirect(`/users?mail=${user.email}`);
         } catch (e) {
-            res.status(500).json(e.message);
+            next(e);
         }
     }
 };

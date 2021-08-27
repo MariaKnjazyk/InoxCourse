@@ -1,6 +1,4 @@
-const path = require('path');
-
 module.exports = {
-    PATH_USERS: path.join(__dirname, '..', 'dataBase', 'users.json'),
+    MONG_CONNECT: 'mongodb://localhost:27017/inoxCourse',
     PORT: 5000
 };
