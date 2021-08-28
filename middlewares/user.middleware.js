@@ -1,5 +1,5 @@
 const ErrorHandler = require('../errors/ErrorHandler');
-const { errorMessage, statusCodes } = require('../configs');
+const { errorMessage, regexes, statusCodes } = require('../configs');
 const { User } = require('../dataBase');
 
 module.exports = {
@@ -104,7 +104,7 @@ module.exports = {
         try {
             const { email } = req.body;
 
-            const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            const regex = regexes.REGEX_EMAIL;
 
             if (!regex.test(email) && email) {
                 throw new ErrorHandler(statusCodes.BAD_REQUEST, errorMessage.NOT_VALID_EMAIL);
