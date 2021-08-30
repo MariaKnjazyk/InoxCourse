@@ -1,22 +1,22 @@
 const ErrorHandler = require('../errors/ErrorHandler');
+const { Coctail } = require('../dataBase');
 const { errorMessage, statusCodes } = require('../configs');
-const { User } = require('../dataBase');
-const { userValidator } = require('../validators');
+const { coctailValidator } = require('../validators');
 
 module.exports = {
-    checkUniqueEmail: async (req, res, next) => {
+    checkUniqueName: async (req, res, next) => {
         try {
-            let { email } = req.body;
+            let { name } = req.body;
 
-            if (email) email = email.toLowerCase();
+            if (name) name = name.toLowerCase();
 
-            const userByEmail = await User.findOne({ email });
+            const coctailByEmail = await Coctail.findOne({ name });
 
-            if (userByEmail) {
-                throw new ErrorHandler(statusCodes.CONFLICT, errorMessage.EXIST_EMAIL);
+            if (coctailByEmail) {
+                throw new ErrorHandler(statusCodes.CONFLICT, errorMessage.EXIST_NAME);
             }
 
-            req.body.email = email;
+            req.body.name = name;
 
             next();
         } catch (e) {
@@ -24,16 +24,16 @@ module.exports = {
         }
     },
 
-    isUserPresent: async (req, res, next) => {
+    isCoctailPresent: async (req, res, next) => {
         try {
-            const { userId } = req.params;
-            const user = await User.findById(userId);
+            const { coctailId } = req.params;
+            const coctail = await Coctail.findById(coctailId);
 
-            if (!user) {
+            if (!coctail) {
                 throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.NOT_FOUND);
             }
 
-            req.user = user;
+            req.coctail = coctail;
 
             next();
         } catch (e) {
@@ -43,7 +43,7 @@ module.exports = {
 
     validateDataToCreate: (req, res, next) => {
         try {
-            const { error } = userValidator.createUser.validate(req.body);
+            const { error } = coctailValidator.createCoctail.validate(req.body);
 
             if (error) {
                 throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);
@@ -57,7 +57,7 @@ module.exports = {
 
     validateDataToUpdate: (req, res, next) => {
         try {
-            const { error } = userValidator.updateOrFindUser.validate(req.body);
+            const { error } = coctailValidator.updateOrFindCoctail.validate(req.body);
 
             if (error) {
                 throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);
@@ -71,7 +71,7 @@ module.exports = {
 
     validateDataToFind: (req, res, next) => {
         try {
-            const { error } = userValidator.updateOrFindUser.validate(req.query);
+            const { error } = coctailValidator.updateOrFindCoctail.validate(req.query);
 
             if (error) {
                 throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);
@@ -83,9 +83,9 @@ module.exports = {
         }
     },
 
-    validateUserId: (req, res, next) => {
+    validateCoctailId: (req, res, next) => {
         try {
-            const { error } = userValidator.userId.validate(req.params);
+            const { error } = coctailValidator.coctailId.validate(req.params);
 
             if (error) {
                 throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);

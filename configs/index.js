@@ -1,5 +1,6 @@
 module.exports = {
-    carYears: require('./car.years'),
+    constants: require('./constants'),
+    coctailEnum: require('./coctail.enum'),
     errorMessage: require('./error.message'),
     regexes: require('./regexes'),
     statusCodes: require('./status-codes'),

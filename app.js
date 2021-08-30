@@ -4,8 +4,7 @@ const mongoose = require('mongoose');
 const { errorMessage, statusCodes, variables: { PORT, MONG_CONNECT } } = require('./configs');
 const {
     authRouter,
-    carRouter,
-    login_registerRouter,
+    coctailRouter,
     userRouter
 } = require('./routers');
 
@@ -16,9 +15,8 @@ mongoose.connect(MONG_CONNECT);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/', login_registerRouter);
 app.use('/auth', authRouter);
-app.use('/cars', carRouter);
+app.use('/coctails', coctailRouter);
 app.use('/users', userRouter);
 app.use('*', _notFoundError);
 app.use(_mainErrorHandler);

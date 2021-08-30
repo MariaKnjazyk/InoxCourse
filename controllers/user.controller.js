@@ -1,12 +1,19 @@
+const { passwordService } = require('../services');
 const { statusCodes } = require('../configs');
 const { User } = require('../dataBase');
+const { userUtil } = require('../utils');
 
 module.exports = {
     createUser: async (req, res, next) => {
         try {
-            const createdUser = await User.create(req.body);
+            const { password } = req.body;
 
-            res.status(statusCodes.CREATED).json(createdUser);
+            const hashedPassword = await passwordService.hash(password);
+
+            const createdUser = await User.create({ ...req.body, password: hashedPassword });
+            const userToReturn = userUtil.userNormalizator(createdUser);
+
+            res.status(statusCodes.CREATED).json(userToReturn);
         } catch (e) {
             next(e);
         }
@@ -28,7 +35,9 @@ module.exports = {
         try {
             const users = await User.find(req.query);
 
-            res.json(users);
+            const usersToReturn = users.map((user) => userUtil.userNormalizator(user));
+
+            res.json(usersToReturn);
         } catch (e) {
             next(e);
         }
@@ -36,7 +45,11 @@ module.exports = {
 
     getUserById: (req, res, next) => {
         try {
-            res.json(req.user);
+            const { user } = req;
+
+            const userToReturn = userUtil.userNormalizator(user);
+
+            res.json(userToReturn);
         } catch (e) {
             next(e);
         }
@@ -48,7 +61,9 @@ module.exports = {
 
             const userUpdate = await User.findByIdAndUpdate(userId, req.body);
 
-            res.json(userUpdate);
+            const userToReturn = userUtil.userNormalizator(userUpdate);
+
+            res.status(statusCodes.CREATED).json(userToReturn);
         } catch (e) {
             next(e);
         }

@@ -1,8 +1,6 @@
 module.exports = {
     EXIST_EMAIL: 'email is already exist',
-    FILL_FIELDS: 'fill in all fields',
-    NO_DATA: 'no data to update',
+    EXIST_NAME: 'name is already exist',
     NOT_FOUND: 'not found',
-    NOT_VALID_EMAIL: 'not a valid mail',
-    WRONG_YEAR: 'wrong year'
+    WRONG_PASSW_OR_EMAIL: 'wrong email or password'
 };

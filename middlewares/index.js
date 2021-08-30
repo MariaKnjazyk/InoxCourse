@@ -1,4 +1,5 @@
 module.exports = {
-    carMiddleware: require('./car.middleware'),
+    authMiddleware: require('./auth.middleware'),
+    coctailMiddleware: require('./coctail.middleware'),
     userMiddleware: require('./user.middleware')
 };

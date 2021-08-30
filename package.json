@@ -2,8 +2,10 @@
   "name": "InoxCourse",
   "version": "1.0.0",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.3",
+    "joi": "^17.4.2",
     "mongoose": "^6.0.0"
   },
   "devDependencies": {

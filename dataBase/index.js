@@ -1,4 +1,4 @@
 module.exports = {
-    Car: require('./Car'),
+    Coctail: require('./Coctail'),
     User: require('./User')
 };
