@@ -1,8 +1,7 @@
-const ErrorHandler = require('../errors/ErrorHandler');
+const { ErrorHandler } = require('../errors');
 const { errorMessage, statusCodes } = require('../configs');
 const { passwordService } = require('../services');
 const { User } = require('../dataBase');
-const { userValidator } = require('../validators');
 
 module.exports = {
     checkPassword: async (req, res, next) => {
@@ -18,30 +17,19 @@ module.exports = {
         }
     },
 
-    isUserPresentByEmail: async (req, res, next) => {
+    isUserPresentByDynamicParam: (paramName, searchIn = 'body', dbFiled = paramName) => async (req, res, next) => {
         try {
-            const { email } = req.body;
-            const user = await User.findOne({ email });
+            let data = req[searchIn][paramName];
+
+            if (paramName === 'email') data = data.toLowerCase();
+
+            const user = await User.findOne({ [dbFiled]: data });
 
             if (!user) {
                 throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.WRONG_PASSW_OR_EMAIL);
             }
 
             req.user = user;
-
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    validateDataToAuth: (req, res, next) => {
-        try {
-            const { error } = userValidator.authUser.validate(req.body);
-
-            if (error) {
-                throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);
-            }
 
             next();
         } catch (e) {

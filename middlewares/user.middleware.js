@@ -1,4 +1,4 @@
-const ErrorHandler = require('../errors/ErrorHandler');
+const { ErrorHandler } = require('../errors');
 const { errorMessage, statusCodes } = require('../configs');
 const { User } = require('../dataBase');
 const { userValidator } = require('../validators');
@@ -24,10 +24,13 @@ module.exports = {
         }
     },
 
-    isUserPresent: async (req, res, next) => {
+    isUserPresentByDynamicParam: (paramName, searchIn = 'body', dbFiled = paramName) => async (req, res, next) => {
         try {
-            const { userId } = req.params;
-            const user = await User.findById(userId);
+            let data = req[searchIn][paramName];
+
+            if (paramName === 'email') data = data.toLowerCase();
+
+            const user = await User.findOne({ [dbFiled]: data });
 
             if (!user) {
                 throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.NOT_FOUND);
@@ -41,51 +44,9 @@ module.exports = {
         }
     },
 
-    validateDataToCreate: (req, res, next) => {
+    validateDataDynamic: (destiny, dataIn = 'body') => (req, res, next) => {
         try {
-            const { error } = userValidator.createUser.validate(req.body);
-
-            if (error) {
-                throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);
-            }
-
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    validateDataToUpdate: (req, res, next) => {
-        try {
-            const { error } = userValidator.updateOrFindUser.validate(req.body);
-
-            if (error) {
-                throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);
-            }
-
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    validateDataToFind: (req, res, next) => {
-        try {
-            const { error } = userValidator.updateOrFindUser.validate(req.query);
-
-            if (error) {
-                throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);
-            }
-
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    validateUserId: (req, res, next) => {
-        try {
-            const { error } = userValidator.userId.validate(req.params);
+            const { error } = userValidator[destiny].validate(req[dataIn]);
 
             if (error) {
                 throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);

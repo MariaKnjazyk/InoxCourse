@@ -1,9 +1,14 @@
 const router = require('express').Router();
 
 const { authController } = require('../controllers');
-const { authMiddleware } = require('../middlewares');
+const { authMiddleware, userMiddleware } = require('../middlewares');
 
-router.post('/', authMiddleware.validateDataToAuth, authMiddleware.isUserPresentByEmail, authMiddleware.checkPassword,
-    authController.loginUser);
+router.post(
+    '/',
+    userMiddleware.validateDataDynamic('authUser'),
+    authMiddleware.isUserPresentByDynamicParam('email'),
+    authMiddleware.checkPassword,
+    authController.loginUser
+);
 
 module.exports = router;

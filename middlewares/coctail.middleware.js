@@ -1,4 +1,4 @@
-const ErrorHandler = require('../errors/ErrorHandler');
+const { ErrorHandler } = require('../errors');
 const { Coctail } = require('../dataBase');
 const { errorMessage, statusCodes } = require('../configs');
 const { coctailValidator } = require('../validators');
@@ -24,10 +24,13 @@ module.exports = {
         }
     },
 
-    isCoctailPresent: async (req, res, next) => {
+    isCoctailPresentByDynamicParam: (paramName, searchIn = 'body', dbFiled = paramName) => async (req, res, next) => {
         try {
-            const { coctailId } = req.params;
-            const coctail = await Coctail.findById(coctailId);
+            let data = req[searchIn][paramName];
+
+            if (paramName === 'name') data = data.toLowerCase();
+
+            const coctail = await Coctail.findOne({ [dbFiled]: data });
 
             if (!coctail) {
                 throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.NOT_FOUND);
@@ -41,51 +44,9 @@ module.exports = {
         }
     },
 
-    validateDataToCreate: (req, res, next) => {
+    validateDataDynamic: (destiny, dataIn = 'body') => (req, res, next) => {
         try {
-            const { error } = coctailValidator.createCoctail.validate(req.body);
-
-            if (error) {
-                throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);
-            }
-
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    validateDataToUpdate: (req, res, next) => {
-        try {
-            const { error } = coctailValidator.updateOrFindCoctail.validate(req.body);
-
-            if (error) {
-                throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);
-            }
-
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    validateDataToFind: (req, res, next) => {
-        try {
-            const { error } = coctailValidator.updateOrFindCoctail.validate(req.query);
-
-            if (error) {
-                throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);
-            }
-
-            next();
-        } catch (e) {
-            next(e);
-        }
-    },
-
-    validateCoctailId: (req, res, next) => {
-        try {
-            const { error } = coctailValidator.coctailId.validate(req.params);
+            const { error } = coctailValidator[destiny].validate(req[dataIn]);
 
             if (error) {
                 throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);

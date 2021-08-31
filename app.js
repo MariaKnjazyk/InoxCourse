@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+require('dotenv').config();
+
 const { errorMessage, statusCodes, variables: { PORT, MONG_CONNECT } } = require('./configs');
 const {
     authRouter,
