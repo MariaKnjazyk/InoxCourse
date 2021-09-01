@@ -1,7 +1,7 @@
-const { ErrorHandler } = require('../errors');
 const { Coctail } = require('../dataBase');
-const { errorMessage, statusCodes } = require('../configs');
 const { coctailValidator } = require('../validators');
+const { dataIn: { BODY }, errorMessage, statusCodes } = require('../configs');
+const { ErrorHandler } = require('../errors');
 
 module.exports = {
     checkUniqueName: async (req, res, next) => {
@@ -24,7 +24,7 @@ module.exports = {
         }
     },
 
-    isCoctailPresentByDynamicParam: (paramName, dataIn = 'body', dbFiled = paramName) => async (req, res, next) => {
+    isCoctailPresentByDynamicParam: (paramName, dataIn = BODY, dbFiled = paramName) => async (req, res, next) => {
         try {
             let data = req[dataIn][paramName];
 
@@ -44,7 +44,7 @@ module.exports = {
         }
     },
 
-    validateDataDynamic: (destiny, dataIn = 'body') => (req, res, next) => {
+    validateDataDynamic: (destiny, dataIn = BODY) => (req, res, next) => {
         try {
             const { error } = coctailValidator[destiny].validate(req[dataIn]);
 

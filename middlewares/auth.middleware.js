@@ -1,5 +1,5 @@
+const { dataIn: { BODY }, errorMessage, statusCodes } = require('../configs');
 const { ErrorHandler } = require('../errors');
-const { errorMessage, statusCodes } = require('../configs');
 const { passwordService } = require('../services');
 const { User } = require('../dataBase');
 
@@ -17,7 +17,7 @@ module.exports = {
         }
     },
 
-    isUserPresentByDynamicParam: (paramName, dataIn = 'body', dbFiled = paramName) => async (req, res, next) => {
+    isUserPresentByDynamicParam: (paramName, dataIn = BODY, dbFiled = paramName) => async (req, res, next) => {
         try {
             let data = req[dataIn][paramName];
 

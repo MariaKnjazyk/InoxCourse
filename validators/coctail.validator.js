@@ -6,11 +6,7 @@ const ingredValidator = Joi.string().alphanum().trim().min(2)
     .max(30);
 
 module.exports = {
-    coctailId: Joi.object({
-        coctailId: Joi.string().trim().regex(ID_REGEXP)
-    }),
-
-    createCoctail: Joi.object({
+    create: Joi.object({
         name: Joi.string().trim().min(2).max(30)
             .required(),
         ingredients: Joi.array().items(ingredValidator).required(),
@@ -20,7 +16,11 @@ module.exports = {
         taste: Joi.string().valid(...Object.values(coctailEnum.taste)),
     }),
 
-    updateOrFindCoctail: Joi.object({
+    id: Joi.object({
+        coctailId: Joi.string().trim().regex(ID_REGEXP)
+    }),
+
+    updateOrFind: Joi.object({
         name: Joi.string().trim().min(2).max(30),
         ingredients: Joi.array().items(ingredValidator),
         make: Joi.string().valid(...Object.values(coctailEnum.make)),

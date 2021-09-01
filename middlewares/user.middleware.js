@@ -1,5 +1,5 @@
+const { dataIn: { BODY }, errorMessage, statusCodes } = require('../configs');
 const { ErrorHandler } = require('../errors');
-const { errorMessage, statusCodes } = require('../configs');
 const { User } = require('../dataBase');
 const { userValidator } = require('../validators');
 
@@ -24,7 +24,7 @@ module.exports = {
         }
     },
 
-    isUserPresentByDynamicParam: (paramName, dataIn = 'body', dbFiled = paramName) => async (req, res, next) => {
+    isUserPresentByDynamicParam: (paramName, dataIn = BODY, dbFiled = paramName) => async (req, res, next) => {
         try {
             let data = req[dataIn][paramName];
 
@@ -44,7 +44,7 @@ module.exports = {
         }
     },
 
-    validateDataDynamic: (destiny, dataIn = 'body') => (req, res, next) => {
+    validateDataDynamic: (destiny, dataIn = BODY) => (req, res, next) => {
         try {
             const { error } = userValidator[destiny].validate(req[dataIn]);
 
