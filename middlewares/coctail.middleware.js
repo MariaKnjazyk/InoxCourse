@@ -24,9 +24,9 @@ module.exports = {
         }
     },
 
-    isCoctailPresentByDynamicParam: (paramName, searchIn = 'body', dbFiled = paramName) => async (req, res, next) => {
+    isCoctailPresentByDynamicParam: (paramName, dataIn = 'body', dbFiled = paramName) => async (req, res, next) => {
         try {
-            let data = req[searchIn][paramName];
+            let data = req[dataIn][paramName];
 
             if (paramName === 'name') data = data.toLowerCase();
 

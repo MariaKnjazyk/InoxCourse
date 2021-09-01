@@ -17,9 +17,9 @@ module.exports = {
         }
     },
 
-    isUserPresentByDynamicParam: (paramName, searchIn = 'body', dbFiled = paramName) => async (req, res, next) => {
+    isUserPresentByDynamicParam: (paramName, dataIn = 'body', dbFiled = paramName) => async (req, res, next) => {
         try {
-            let data = req[searchIn][paramName];
+            let data = req[dataIn][paramName];
 
             if (paramName === 'email') data = data.toLowerCase();
 
