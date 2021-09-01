@@ -1,22 +1,26 @@
 const { Coctail } = require('../dataBase');
 const { coctailValidator } = require('../validators');
-const { dataIn: { BODY }, errorMessage, statusCodes } = require('../configs');
+const {
+    constants: { NEED_ITEM },
+    dataIn: { BODY },
+    errorMessage, statusCodes
+} = require('../configs');
 const { ErrorHandler } = require('../errors');
 
 module.exports = {
-    checkUniqueName: async (req, res, next) => {
+    isCoctailPresent: (isCoctailNeed = NEED_ITEM) => (req, res, next) => {
         try {
-            let { name } = req.body;
+            const { coctail } = req;
 
-            if (name) name = name.toLowerCase();
+            if (!coctail && isCoctailNeed) {
+                throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.NOT_FOUND);
+            }
 
-            const coctailByEmail = await Coctail.findOne({ name });
-
-            if (coctailByEmail) {
+            if (coctail && !isCoctailNeed) {
                 throw new ErrorHandler(statusCodes.CONFLICT, errorMessage.EXIST_NAME);
             }
 
-            req.body.name = name;
+            req.coctail = coctail;
 
             next();
         } catch (e) {
@@ -24,17 +28,15 @@ module.exports = {
         }
     },
 
-    isCoctailPresentByDynamicParam: (paramName, dataIn = BODY, dbFiled = paramName) => async (req, res, next) => {
+    getCoctailByDynamicParam: (paramName, dataIn = BODY, dbFiled = paramName) => async (req, res, next) => {
         try {
             let data = req[dataIn][paramName];
+
+            if (!data) return next();
 
             if (paramName === 'name') data = data.toLowerCase();
 
             const coctail = await Coctail.findOne({ [dbFiled]: data });
-
-            if (!coctail) {
-                throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.NOT_FOUND);
-            }
 
             req.coctail = coctail;
 

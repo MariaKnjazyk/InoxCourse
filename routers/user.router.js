@@ -1,6 +1,7 @@
 const router = require('express').Router();
 
 const {
+    constants: { NEED_ITEM },
     dataIn,
     dbFiled,
     destiny,
@@ -17,7 +18,8 @@ router.get(
 router.post(
     '/',
     userMiddleware.validateDataDynamic(destiny.CREATE),
-    userMiddleware.checkUniqueEmail,
+    userMiddleware.getUserByDynamicParam(paramName.user.EMAIL),
+    userMiddleware.isUserPresent(!NEED_ITEM),
     userController.createUser
 );
 
@@ -27,19 +29,23 @@ router.use(
 );
 router.delete(
     '/:userId',
-    userMiddleware.isUserPresentByDynamicParam(paramName.user.ID, dataIn.PARAMS, dbFiled._ID),
+    userMiddleware.getUserByDynamicParam(paramName.user.ID, dataIn.PARAMS, dbFiled._ID),
+    userMiddleware.isUserPresent(),
     userController.deleteUser
 );
 router.get(
     '/:userId',
-    userMiddleware.isUserPresentByDynamicParam(paramName.user.ID, dataIn.PARAMS, dbFiled._ID),
+    userMiddleware.getUserByDynamicParam(paramName.user.ID, dataIn.PARAMS, dbFiled._ID),
+    userMiddleware.isUserPresent(),
     userController.getUserById
 );
 router.put(
     '/:userId',
     userMiddleware.validateDataDynamic(destiny.UPDATE_OR_FIND),
-    userMiddleware.checkUniqueEmail,
-    userMiddleware.isUserPresentByDynamicParam(paramName.user.ID, dataIn.PARAMS, dbFiled._ID),
+    userMiddleware.getUserByDynamicParam(paramName.user.EMAIL),
+    userMiddleware.isUserPresent(!NEED_ITEM),
+    userMiddleware.getUserByDynamicParam(paramName.user.ID, dataIn.PARAMS, dbFiled._ID),
+    userMiddleware.isUserPresent(),
     userController.updateUser
 );
 

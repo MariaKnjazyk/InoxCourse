@@ -1,8 +1,9 @@
 const router = require('express').Router();
 
 const { authController } = require('../controllers');
-const { authMiddleware, userMiddleware } = require('../middlewares');
+const { userMiddleware } = require('../middlewares');
 const {
+    constants: { AUTH, NEED_ITEM },
     destiny,
     paramName
 } = require('../configs');
@@ -10,8 +11,8 @@ const {
 router.post(
     '/',
     userMiddleware.validateDataDynamic(destiny.AUTH),
-    authMiddleware.isUserPresentByDynamicParam(paramName.user.EMAIL),
-    authMiddleware.checkPassword,
+    userMiddleware.getUserByDynamicParam(paramName.user.EMAIL),
+    userMiddleware.isUserPresent(NEED_ITEM, AUTH),
     authController.loginUser
 );
 

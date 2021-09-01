@@ -3,6 +3,7 @@ const router = require('express').Router();
 const { coctailController } = require('../controllers');
 const { coctailMiddleware } = require('../middlewares');
 const {
+    constants: { NEED_ITEM },
     dataIn,
     dbFiled,
     destiny,
@@ -17,7 +18,8 @@ router.get(
 router.post(
     '/',
     coctailMiddleware.validateDataDynamic(destiny.CREATE),
-    coctailMiddleware.checkUniqueName,
+    coctailMiddleware.getCoctailByDynamicParam(paramName.coctail.NAME),
+    coctailMiddleware.isCoctailPresent(!NEED_ITEM),
     coctailController.createCoctail
 );
 
@@ -27,19 +29,23 @@ router.use(
 );
 router.delete(
     '/:coctailId',
-    coctailMiddleware.isCoctailPresentByDynamicParam(paramName.coctail.ID, dataIn.PARAMS, dbFiled._ID),
+    coctailMiddleware.getCoctailByDynamicParam(paramName.coctail.ID, dataIn.PARAMS, dbFiled._ID),
+    coctailMiddleware.isCoctailPresent(),
     coctailController.deleteCoctail
 );
 router.get(
     '/:coctailId',
-    coctailMiddleware.isCoctailPresentByDynamicParam(paramName.coctail.ID, dataIn.PARAMS, dbFiled._ID),
+    coctailMiddleware.getCoctailByDynamicParam(paramName.coctail.ID, dataIn.PARAMS, dbFiled._ID),
+    coctailMiddleware.isCoctailPresent(),
     coctailController.getCoctailById
 );
 router.put(
     '/:coctailId',
     coctailMiddleware.validateDataDynamic(destiny.UPDATE_OR_FIND),
-    coctailMiddleware.checkUniqueName,
-    coctailMiddleware.isCoctailPresentByDynamicParam(paramName.coctail.ID, dataIn.PARAMS, dbFiled._ID),
+    coctailMiddleware.getCoctailByDynamicParam(paramName.coctail.NAME),
+    coctailMiddleware.isCoctailPresent(!NEED_ITEM),
+    coctailMiddleware.getCoctailByDynamicParam(paramName.coctail.ID, dataIn.PARAMS, dbFiled._ID),
+    coctailMiddleware.isCoctailPresent(),
     coctailController.updateCoctail
 );
 

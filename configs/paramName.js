@@ -11,7 +11,7 @@ module.exports = {
 
     user: {
         EMAIL: 'email',
-        ID: 'userID',
+        ID: 'userId',
         NAME: 'name'
     }
 };

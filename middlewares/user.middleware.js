@@ -1,22 +1,28 @@
-const { dataIn: { BODY }, errorMessage, statusCodes } = require('../configs');
+const {
+    constants: { NEED_ITEM, AUTH },
+    dataIn: { BODY },
+    errorMessage,
+    statusCodes
+} = require('../configs');
 const { ErrorHandler } = require('../errors');
 const { User } = require('../dataBase');
 const { userValidator } = require('../validators');
 
 module.exports = {
-    checkUniqueEmail: async (req, res, next) => {
+    getUserByDynamicParam: (paramName, dataIn = BODY, dbFiled = paramName) => async (req, res, next) => {
         try {
-            let { email } = req.body;
+            console.log('data');
+            let data = req[dataIn][paramName];
+            console.log(data);
 
-            if (email) email = email.toLowerCase();
+            if (!data) return next();
 
-            const userByEmail = await User.findOne({ email });
+            if (paramName === 'email') data = data.toLowerCase();
 
-            if (userByEmail) {
-                throw new ErrorHandler(statusCodes.CONFLICT, errorMessage.EXIST_EMAIL);
-            }
+            const user = await User.findOne({ [dbFiled]: data });
 
-            req.body.email = email;
+            req.user = user;
+            console.log(user);
 
             next();
         } catch (e) {
@@ -24,19 +30,20 @@ module.exports = {
         }
     },
 
-    isUserPresentByDynamicParam: (paramName, dataIn = BODY, dbFiled = paramName) => async (req, res, next) => {
+    isUserPresent: (isUserNeed = NEED_ITEM, auth = !AUTH) => (req, res, next) => {
         try {
-            let data = req[dataIn][paramName];
+            console.log('user');
+            const { user } = req;
+            console.log(user);
+            if (!user && isUserNeed) {
+                if (!auth) throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.NOT_FOUND);
 
-            if (paramName === 'email') data = data.toLowerCase();
-
-            const user = await User.findOne({ [dbFiled]: data });
-
-            if (!user) {
-                throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.NOT_FOUND);
+                throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.WRONG_PASSW_OR_EMAIL);
             }
 
-            req.user = user;
+            if (user && !isUserNeed) {
+                throw new ErrorHandler(statusCodes.CONFLICT, errorMessage.EXIST_EMAIL);
+            }
 
             next();
         } catch (e) {
