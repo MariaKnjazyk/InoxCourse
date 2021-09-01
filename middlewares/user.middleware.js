@@ -11,9 +11,7 @@ const { userValidator } = require('../validators');
 module.exports = {
     getUserByDynamicParam: (paramName, dataIn = BODY, dbFiled = paramName) => async (req, res, next) => {
         try {
-            console.log('data');
             let data = req[dataIn][paramName];
-            console.log(data);
 
             if (!data) return next();
 
@@ -22,7 +20,6 @@ module.exports = {
             const user = await User.findOne({ [dbFiled]: data });
 
             req.user = user;
-            console.log(user);
 
             next();
         } catch (e) {
@@ -32,9 +29,8 @@ module.exports = {
 
     isUserPresent: (isUserNeed = NEED_ITEM, auth = !AUTH) => (req, res, next) => {
         try {
-            console.log('user');
             const { user } = req;
-            console.log(user);
+
             if (!user && isUserNeed) {
                 if (!auth) throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.NOT_FOUND);
 
