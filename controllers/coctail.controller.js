@@ -1,12 +1,16 @@
-const { Coctail } = require('../dataBase');
-const { statusCodes } = require('../configs');
+const { Coctail, CoctailCreator } = require('../dataBase');
+const { databaseTablesEnum: { COCTAIL, USER }, statusCodes } = require('../configs');
 
 module.exports = {
     createCoctail: async (req, res, next) => {
         try {
+            const { loginUser } = req;
+
             const createdCoctail = await Coctail.create(req.body);
 
-            res.status(statusCodes.CREATED).json(createdCoctail);
+            await CoctailCreator.create({ [COCTAIL]: createdCoctail._id, [USER]: loginUser._id });
+
+            res.status(statusCodes.CREATED).json({ createdCoctail, [USER]: loginUser._id });
         } catch (e) {
             next(e);
         }

@@ -1,13 +1,14 @@
 const router = require('express').Router();
 
 const { coctailController } = require('../controllers');
-const { coctailMiddleware } = require('../middlewares');
+const { authMiddleware, coctailMiddleware } = require('../middlewares');
 const {
-    constants: { NEED_ITEM },
+    constants: { NEED_ITEM, NO_ONE },
     dataIn,
     dbFiled,
     destiny,
-    paramName
+    paramName,
+    userRolesEnum: { ADMIN }
 } = require('../configs');
 
 router.get(
@@ -20,6 +21,7 @@ router.post(
     coctailMiddleware.validateDataDynamic(destiny.CREATE),
     coctailMiddleware.getCoctailByDynamicParam(paramName.coctail.NAME),
     coctailMiddleware.isCoctailPresent(!NEED_ITEM),
+    authMiddleware.validateToken(),
     coctailController.createCoctail
 );
 
@@ -31,6 +33,9 @@ router.delete(
     '/:coctailId',
     coctailMiddleware.getCoctailByDynamicParam(paramName.coctail.ID, dataIn.PARAMS, dbFiled._ID),
     coctailMiddleware.isCoctailPresent(),
+    authMiddleware.validateToken(),
+    coctailMiddleware.getCoctailCreator,
+    coctailMiddleware.checkUserAccess([ADMIN]),
     coctailController.deleteCoctail
 );
 router.get(
@@ -46,6 +51,9 @@ router.put(
     coctailMiddleware.isCoctailPresent(!NEED_ITEM),
     coctailMiddleware.getCoctailByDynamicParam(paramName.coctail.ID, dataIn.PARAMS, dbFiled._ID),
     coctailMiddleware.isCoctailPresent(),
+    authMiddleware.validateToken(),
+    coctailMiddleware.getCoctailCreator,
+    coctailMiddleware.checkUserAccess([NO_ONE]),
     coctailController.updateCoctail
 );
 

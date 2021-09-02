@@ -9,6 +9,24 @@ const { User } = require('../dataBase');
 const { userValidator } = require('../validators');
 
 module.exports = {
+    checkUserAccess: (rolesArr = []) => (req, res, next) => {
+        try {
+            const { loginUser, user } = req;
+
+            if (loginUser._id.toString() === user._id.toString()) return next();
+
+            if (!rolesArr.length) return next();
+
+            if (!rolesArr.includes(loginUser.role)) {
+                throw new ErrorHandler(statusCodes.FORBIDDEN, errorMessage.FORBIDDEN);
+            }
+
+            next();
+        } catch (e) {
+            next(e);
+        }
+    },
+
     getUserByDynamicParam: (paramName, dataIn = BODY, dbFiled = paramName) => async (req, res, next) => {
         try {
             let data = req[dataIn][paramName];

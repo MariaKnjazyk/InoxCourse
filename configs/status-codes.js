@@ -3,6 +3,8 @@ module.exports = {
     CONFLICT: 409,
     CREATED: 201,
     DELETED: 204,
+    FORBIDDEN: 403,
     INTERNAL_SERVER_ERROR: 500,
-    NOT_FOUND: 404
+    NOT_FOUND: 404,
+    NOT_VALID_TOKEN: 401
 };

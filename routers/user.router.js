@@ -1,14 +1,15 @@
 const router = require('express').Router();
 
 const {
-    constants: { NEED_ITEM },
+    constants: { NEED_ITEM, NO_ONE },
     dataIn,
     dbFiled,
     destiny,
-    paramName
+    paramName,
+    userRolesEnum: { ADMIN }
 } = require('../configs');
 const { userController } = require('../controllers');
-const { userMiddleware } = require('../middlewares');
+const { authMiddleware, userMiddleware } = require('../middlewares');
 
 router.get(
     '/',
@@ -29,8 +30,10 @@ router.use(
 );
 router.delete(
     '/:userId',
+    authMiddleware.validateToken(),
     userMiddleware.getUserByDynamicParam(paramName.user.ID, dataIn.PARAMS, dbFiled._ID),
     userMiddleware.isUserPresent(),
+    userMiddleware.checkUserAccess([ADMIN]),
     userController.deleteUser
 );
 router.get(
@@ -42,10 +45,12 @@ router.get(
 router.put(
     '/:userId',
     userMiddleware.validateDataDynamic(destiny.UPDATE_OR_FIND),
+    authMiddleware.validateToken(),
     userMiddleware.getUserByDynamicParam(paramName.user.EMAIL),
     userMiddleware.isUserPresent(!NEED_ITEM),
     userMiddleware.getUserByDynamicParam(paramName.user.ID, dataIn.PARAMS, dbFiled._ID),
     userMiddleware.isUserPresent(),
+    userMiddleware.checkUserAccess([NO_ONE]),
     userController.updateUser
 );
 

@@ -1,6 +1,6 @@
 const { model, Schema } = require('mongoose');
 
-const { coctailEnum } = require('../configs');
+const { coctailEnum, databaseTablesEnum: { COCTAIL } } = require('../configs');
 
 const coctailSchema = new Schema({
     name: {
@@ -38,4 +38,4 @@ const coctailSchema = new Schema({
     }
 }, { timestamps: true });
 
-module.exports = model('coctail', coctailSchema);
+module.exports = model(COCTAIL, coctailSchema);
