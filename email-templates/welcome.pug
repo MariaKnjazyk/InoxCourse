@@ -1,0 +1,6 @@
+extends container
+block content
+    div
+        | #{userName}, to activate your account, follow the link
+        br
+        a(href = activeTokenURL) #{activeTokenURL}

@@ -7,25 +7,56 @@ const {
     destiny,
     paramName
 } = require('../configs');
+const { ChangePass, InactiveAccount } = require('../dataBase');
 
 router.post(
     '/',
     userMiddleware.validateDataDynamic(destiny.AUTH),
     userMiddleware.getUserByDynamicParam(paramName.user.EMAIL),
     userMiddleware.isUserPresent(NEED_ITEM, AUTH),
+    authMiddleware.isAccountActivated,
     authController.loginUser
 );
 
 router.post(
+    '/activate',
+    authMiddleware.validateActionToken(InactiveAccount),
+    authController.accountActivation
+);
+
+router.delete(
     '/logout',
     authMiddleware.validateToken(),
     authController.logoutUser
 );
 
-router.post(
-    '/logout_all_devices',
+router.delete(
+    '/logout/all_devices',
     authMiddleware.validateToken(),
     authController.logoutUserAllDevices
+);
+
+router.post(
+    '/password/forgot',
+    userMiddleware.validateDataDynamic(destiny.CHANGE_PASSWORD_FORGOT_USER),
+    userMiddleware.getUserByDynamicParam(paramName.user.EMAIL),
+    userMiddleware.isUserPresent(),
+    authController.sendMailChangePassword
+);
+
+router.put(
+    '/password/forgot',
+    userMiddleware.validateDataDynamic(destiny.CHANGE_PASSWORD_FORGOT),
+    authMiddleware.validateActionToken(ChangePass),
+    authController.changePassword
+);
+
+router.put(
+    '/password/reset',
+    userMiddleware.validateDataDynamic(destiny.CHANGE_PASSWORD_RESET),
+    authMiddleware.validateToken(),
+    authMiddleware.checkOldPassword,
+    authController.changePassword
 );
 
 router.post(

@@ -11,7 +11,7 @@ const OAuthSchema = new Schema({
         type: String,
         required: true
     },
-    user: {
+    [USER]: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: USER

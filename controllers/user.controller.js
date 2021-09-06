@@ -1,6 +1,11 @@
-const { passwordService } = require('../services');
-const { statusCodes } = require('../configs');
-const { User } = require('../dataBase');
+const { emailService, jwtActionService, passwordService } = require('../services');
+const {
+    constants: { QUERY_ACTION_TOKEN },
+    emailActionsEnum,
+    statusCodes,
+    variables: { FRONTEND_URL }
+} = require('../configs');
+const { InactiveAccount, User } = require('../dataBase');
 const { userUtil } = require('../utils');
 
 module.exports = {
@@ -12,6 +17,16 @@ module.exports = {
 
             const createdUser = await User.create({ ...req.body, password: hashedPassword });
             const userToReturn = userUtil.userNormalizator(createdUser);
+
+            const action_token = await jwtActionService.generateActionToken();
+
+            await InactiveAccount.create({ action_token, user: userToReturn._id });
+
+            await emailService.sendMail(
+                userToReturn.email,
+                emailActionsEnum.WELCOME,
+                { userName: userToReturn.name, activeTokenURL: FRONTEND_URL + QUERY_ACTION_TOKEN + action_token }
+            );
 
             res.status(statusCodes.CREATED).json(userToReturn);
         } catch (e) {
