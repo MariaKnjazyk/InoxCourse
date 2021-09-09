@@ -1,6 +1,7 @@
-const { ChangePass, User } = require('../dataBase');
-const { jwtActionService, emailService } = require('../services');
+const { ActToken, User } = require('../dataBase');
+const { jwtService, emailService } = require('../services');
 const {
+    actionEnum,
     constants: { QUERY_ACTION_TOKEN, SYSTEM },
     userRolesEnum: { SUPER_ADMIN },
     emailActionsEnum,
@@ -23,9 +24,9 @@ const createByAdmin = async (name, email, role, creatorName = SYSTEM, password =
         }
     );
 
-    const action_token = await jwtActionService.generateActionToken();
+    const action_token = await jwtService.generateActionToken(actionEnum.FORGOT_PASSWORD);
 
-    await ChangePass.create({ action_token, [USER]: user._id });
+    await ActToken.create({ action_token, [USER]: user._id });
 
     await emailService.sendMail(
         user.email,

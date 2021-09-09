@@ -28,7 +28,7 @@ const userSchema = new Schema({
         enum: Object.values(userRolesEnum),
         type: String
     }
-}, { timestamps: true });
+}, { timestamps: true, toObject: { virtuals: true }, toJSON: { virtuals: true } });
 
 userSchema.statics = {
     async createWithHashPassword(userObject) {
