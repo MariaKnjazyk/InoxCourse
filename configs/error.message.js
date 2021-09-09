@@ -7,5 +7,7 @@ module.exports = {
     NOT_FOUND: 'not found',
     NOT_VALID_TOKEN: 'not valid token',
     WRONG_PASSW_OR_EMAIL: 'wrong email or password',
-    WRONG_TEMPLATE_NAME: 'wrong template name'
+    WRONG_ROLE: 'wrong role',
+    WRONG_TEMPLATE_NAME: 'wrong template name',
+    WRONG_TOKEN_TYPE: 'wrong token type'
 };

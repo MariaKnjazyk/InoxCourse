@@ -1,8 +1,7 @@
 module.exports = {
-    CHANGE_PASS: 'changePass',
+    ACT_TOKEN: 'actToken',
     COCTAIL: 'coctail',
     COCTAIL_CREATOR: 'coctailCreator',
-    INACTIVE_ACCOUNT: 'inactiveAccount',
     USER: 'user',
     OAuth: 'oauth'
 };

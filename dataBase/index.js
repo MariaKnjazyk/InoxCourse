@@ -1,6 +1,5 @@
 module.exports = {
-    InactiveAccount: require('./InactiveAccount'),
-    ChangePass: require('./ChangePass'),
+    ActToken: require('./ActToken'),
     Coctail: require('./Coctail'),
     CoctailCreator: require('./CoctailCreator'),
     OAuth: require('./OAuth'),

@@ -1,4 +1,5 @@
 const {
+    actionEnum,
     constants: { AUTHORIZATION, QUERY_ACTION_TOKEN },
     databaseTablesEnum: { USER },
     dbFiled: { _ID },
@@ -8,15 +9,13 @@ const {
 } = require('../configs');
 const {
     emailService,
-    jwtActionService,
     jwtService,
     passwordService
 } = require('../services');
 const {
-    ChangePass,
+    ActToken,
     OAuth,
-    User,
-    InactiveAccount
+    User
 } = require('../dataBase');
 const { userUtil } = require('../utils');
 
@@ -25,7 +24,7 @@ module.exports = {
         try {
             const { loginUser } = req;
 
-            await InactiveAccount.findOneAndDelete({ [USER]: loginUser[_ID] });
+            await ActToken.findOneAndDelete({ [USER]: loginUser[_ID], action: actionEnum.ACTIVATE_ACCOUNT });
 
             const userToReturn = userUtil.userNormalizator(loginUser);
 
@@ -39,7 +38,7 @@ module.exports = {
         try {
             const { loginUser, body: { password } } = req;
 
-            await ChangePass.findOneAndDelete({ [USER]: loginUser[_ID] });
+            await ActToken.findOneAndDelete({ [USER]: loginUser[_ID], action: actionEnum.FORGOT_PASSWORD });
 
             const hashedPassword = await passwordService.hash(password);
 
@@ -118,9 +117,9 @@ module.exports = {
 
             const userToReturn = userUtil.userNormalizator(user);
 
-            const action_token = await jwtActionService.generateActionToken();
+            const action_token = await jwtService.generateActionToken(actionEnum.FORGOT_PASSWORD);
 
-            await ChangePass.create({ action_token, [USER]: userToReturn[_ID] });
+            await ActToken.create({ action_token, [USER]: userToReturn[_ID], action: actionEnum.FORGOT_PASSWORD });
 
             await emailService.sendMail(
                 userToReturn.email,

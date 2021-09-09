@@ -29,6 +29,14 @@ const create = Joi.object({
     role: Joi.string().valid(...Object.values(userRolesEnum))
 });
 
+const createByAdmin = Joi.object({
+    email: Joi.string().trim().regex(EMAIL_REGEXP).required(),
+    name: Joi.string().alphanum().trim().required()
+        .min(2)
+        .max(30),
+    role: Joi.string().valid(...Object.values(userRolesEnum))
+});
+
 const id = Joi.object({
     userId: Joi.string().trim().regex(ID_REGEXP)
 });
@@ -47,6 +55,7 @@ module.exports = {
     changePasswordForgotUser,
     changePasswordReset,
     create,
+    createByAdmin,
     updateOrFind,
     id
 };

@@ -3,11 +3,11 @@ const router = require('express').Router();
 const { authController } = require('../controllers');
 const { authMiddleware, userMiddleware } = require('../middlewares');
 const {
+    actionEnum: { ACTIVATE_ACCOUNT, FORGOT_PASSWORD },
     constants: { AUTH, NEED_ITEM, TOKEN_TYPE_REFRESH },
     destiny,
     paramName
 } = require('../configs');
-const { ChangePass, InactiveAccount } = require('../dataBase');
 
 router.post(
     '/',
@@ -20,7 +20,7 @@ router.post(
 
 router.post(
     '/activate',
-    authMiddleware.validateActionToken(InactiveAccount),
+    authMiddleware.validateActionToken(ACTIVATE_ACCOUNT),
     authController.accountActivation
 );
 
@@ -47,7 +47,7 @@ router.post(
 router.put(
     '/password/forgot',
     userMiddleware.validateDataDynamic(destiny.CHANGE_PASSWORD_FORGOT),
-    authMiddleware.validateActionToken(ChangePass),
+    authMiddleware.validateActionToken(FORGOT_PASSWORD),
     authController.changePassword
 );
 

@@ -1,26 +1,24 @@
-const { emailService, jwtActionService, passwordService } = require('../services');
+const { emailService, jwtService } = require('../services');
 const {
+    actionEnum,
     constants: { QUERY_ACTION_TOKEN },
     emailActionsEnum,
     statusCodes,
     variables: { FRONTEND_URL }
 } = require('../configs');
-const { InactiveAccount, User } = require('../dataBase');
+const { ActToken, User } = require('../dataBase');
 const { userUtil } = require('../utils');
 
 module.exports = {
     createUser: async (req, res, next) => {
         try {
-            const { password } = req.body;
+            const createdUser = await User.createWithHashPassword(req.body);
 
-            const hashedPassword = await passwordService.hash(password);
-
-            const createdUser = await User.create({ ...req.body, password: hashedPassword });
             const userToReturn = userUtil.userNormalizator(createdUser);
 
-            const action_token = await jwtActionService.generateActionToken();
+            const action_token = await jwtService.generateActionToken(actionEnum.ACTIVATE_ACCOUNT);
 
-            await InactiveAccount.create({ action_token, user: userToReturn._id });
+            await ActToken.create({ action_token, user: userToReturn._id, action: actionEnum.ACTIVATE_ACCOUNT });
 
             await emailService.sendMail(
                 userToReturn.email,

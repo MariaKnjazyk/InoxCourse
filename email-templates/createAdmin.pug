@@ -1,0 +1,10 @@
+extends container
+block content
+    div
+        | #{userName}, welcome to the family of #{userRole}'s!
+        br
+        | #{creatorName} has created your account.
+        br
+        | to create a password, follow the link
+        br
+        a(href = activeTokenURL) #{activeTokenURL}

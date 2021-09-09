@@ -1,19 +1,20 @@
 const {
+    actionEnum,
     constants: { AUTHORIZATION, TOKEN_TYPE_ACCESS },
     databaseTablesEnum: { USER },
     errorMessage,
     statusCodes
 } = require('../configs');
 const { ErrorHandler } = require('../errors');
-const { jwtActionService, jwtService, passwordService } = require('../services');
-const { InactiveAccount, OAuth } = require('../dataBase');
+const { jwtService, passwordService } = require('../services');
+const { ActToken, OAuth } = require('../dataBase');
 
 module.exports = {
     isAccountActivated: async (req, res, next) => {
         try {
             const { user } = req;
 
-            const inactiveAcc = await InactiveAccount.findOne({ [USER]: user._id });
+            const inactiveAcc = await ActToken.findOne({ [USER]: user._id, action: actionEnum.ACTIVATE_ACCOUNT });
 
             if (inactiveAcc) {
                 throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.ACCOUNT_IS_NOT_ACTIVATED);
@@ -37,7 +38,7 @@ module.exports = {
         }
     },
 
-    validateActionToken: (db) => async (req, res, next) => {
+    validateActionToken: (action) => async (req, res, next) => {
         try {
             const token = req.get(AUTHORIZATION);
 
@@ -45,9 +46,9 @@ module.exports = {
                 throw new ErrorHandler(statusCodes.NOT_VALID_TOKEN, errorMessage.NO_TOKEN);
             }
 
-            await jwtActionService.verifyActionToken(token);
+            await jwtService.verifyActionToken(token, action);
 
-            const tokenFromDB = await db.findOne({ action_token: token }).populate(USER);
+            const tokenFromDB = await ActToken.findOne({ action_token: token, action });
 
             if (!tokenFromDB) {
                 throw new ErrorHandler(statusCodes.NOT_VALID_TOKEN, errorMessage.NOT_VALID_TOKEN);
@@ -71,7 +72,7 @@ module.exports = {
 
             await jwtService.verifyToken(token, tokenType);
 
-            const tokenFromDB = await OAuth.findOne({ [tokenType]: token }).populate(USER);
+            const tokenFromDB = await OAuth.findOne({ [tokenType]: token });
 
             if (!tokenFromDB) {
                 throw new ErrorHandler(statusCodes.NOT_VALID_TOKEN, errorMessage.NOT_VALID_TOKEN);

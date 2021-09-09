@@ -3,12 +3,19 @@ const mongoose = require('mongoose');
 
 require('dotenv').config();
 
-const { errorMessage, statusCodes, variables: { PORT, MONG_CONNECT } } = require('./configs');
 const {
+    errorMessage,
+    statusCodes,
+    variables: { PORT, MONG_CONNECT }
+} = require('./configs');
+const {
+    adminRouter,
     authRouter,
     coctailRouter,
     userRouter
 } = require('./routers');
+
+const { superAdminUtil } = require('./utils');
 
 const app = express();
 
@@ -17,11 +24,20 @@ mongoose.connect(MONG_CONNECT);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/admin', adminRouter);
 app.use('/auth', authRouter);
 app.use('/coctails', coctailRouter);
 app.use('/users', userRouter);
 app.use('*', _notFoundError);
 app.use(_mainErrorHandler);
+
+(async () => {
+    try {
+        await superAdminUtil.checkCreateSuperAdmin();
+    } catch (e) {
+        console.log(e);
+    }
+})();
 
 app.listen(PORT, () => {
     console.log('App listen', PORT);
