@@ -50,7 +50,7 @@ function _notFoundError(err, req, res, next) {
     });
 }
 
-// eslint-disable-next-line no-unused-vars
+//  eslint-disable-next-line no-unused-vars
 function _mainErrorHandler(err, req, res, next) {
     res.status(err.status || statusCodes.INTERNAL_SERVER_ERROR).json({ message: err.message });
 }
