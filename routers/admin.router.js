@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { authMiddleware, userMiddleware } = require('../middlewares');
+const { authMiddleware, fileMiddlewares, userMiddleware } = require('../middlewares');
 const { adminController } = require('../controllers');
 const {
     constants: { NEED_ITEM },
@@ -9,20 +9,17 @@ const {
     userRolesEnum: { ADMIN, SUPER_ADMIN }
 } = require('../configs');
 
-router.use(
-    '*',
+router.post(
+    '/create',
+    userMiddleware.validateDataDynamic(destiny.CREATE_BY_ADMIN),
+    fileMiddlewares.checkAvatar,
     authMiddleware.validateToken(),
     userMiddleware.checkUserAccess(
         [
             ADMIN,
             SUPER_ADMIN
         ]
-    )
-);
-
-router.post(
-    '/create',
-    userMiddleware.validateDataDynamic(destiny.CREATE_BY_ADMIN),
+    ),
     userMiddleware.getUserByDynamicParam(paramName.user.EMAIL),
     userMiddleware.isUserPresent(!NEED_ITEM),
     adminController.createUser

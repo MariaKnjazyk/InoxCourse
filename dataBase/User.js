@@ -4,6 +4,10 @@ const { databaseTablesEnum: { USER }, userRolesEnum } = require('../configs');
 const { passwordService } = require('../services');
 
 const userSchema = new Schema({
+    avatar: {
+        type: String
+    },
+
     email: {
         trim: true,
         type: String,

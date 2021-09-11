@@ -1,4 +1,4 @@
-const { emailService, jwtService } = require('../services');
+const { emailService, jwtService, s3Service } = require('../services');
 const {
     actionEnum,
     constants: { QUERY_ACTION_TOKEN },
@@ -12,7 +12,16 @@ const { userUtil } = require('../utils');
 module.exports = {
     createUser: async (req, res, next) => {
         try {
-            const createdUser = await User.createWithHashPassword(req.body);
+            let createdUser = await User.createWithHashPassword(req.body);
+
+            if (req.files && req.files.avatar) {
+                const s3Response = await s3Service.uploadFile(req.files.avatar, 'users', createdUser._id);
+                createdUser = await User.findByIdAndUpdate(
+                    createdUser._id,
+                    { avatar: s3Response.Location },
+                    { new: true }
+                );
+            }
 
             const userToReturn = userUtil.userNormalizator(createdUser);
 
@@ -34,11 +43,15 @@ module.exports = {
 
     deleteUser: async (req, res, next) => {
         try {
-            const { userId } = req.params;
+            const { params: { userId }, user } = req;
 
             await User.deleteOne({ _id: userId });
 
-            res.status(statusCodes.DELETED).json(`User with id ${userId} is deleted`);
+            if (user.avatar) {
+                await s3Service.deleteFile(user.avatar);
+            }
+
+            res.sendStatus(statusCodes.DELETED);
         } catch (e) {
             next(e);
         }
@@ -70,11 +83,24 @@ module.exports = {
 
     updateUser: async (req, res, next) => {
         try {
-            const { userId } = req.params;
+            let { user } = req;
 
-            const userUpdate = await User.findByIdAndUpdate(userId, req.body);
+            if (req.files && req.files.avatar) {
+                if (user.avatar) {
+                    await s3Service.deleteFile(user.avatar);
+                }
 
-            const userToReturn = userUtil.userNormalizator(userUpdate);
+                const s3Response = await s3Service.uploadFile(req.files.avatar, 'users', user._id);
+                user = await User.findByIdAndUpdate(
+                    user._id,
+                    { ...req.body, avatar: s3Response.Location },
+                    { new: true }
+                );
+            } else {
+                user = await User.findByIdAndUpdate(user._id, req.body);
+            }
+
+            const userToReturn = userUtil.userNormalizator(user);
 
             res.status(statusCodes.CREATED).json(userToReturn);
         } catch (e) {

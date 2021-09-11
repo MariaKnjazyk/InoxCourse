@@ -9,7 +9,7 @@ const {
     userRolesEnum: { ADMIN, SUPER_ADMIN, USER }
 } = require('../configs');
 const { userController } = require('../controllers');
-const { authMiddleware, userMiddleware } = require('../middlewares');
+const { authMiddleware, fileMiddlewares, userMiddleware } = require('../middlewares');
 
 router.get(
     '/',
@@ -19,6 +19,7 @@ router.get(
 router.post(
     '/',
     userMiddleware.validateDataDynamic(destiny.CREATE),
+    fileMiddlewares.checkAvatar,
     userMiddleware.checkUserRoleForCreate([USER]),
     userMiddleware.getUserByDynamicParam(paramName.user.EMAIL),
     userMiddleware.isUserPresent(!NEED_ITEM),
@@ -49,6 +50,7 @@ router.get(
 router.put(
     '/:userId',
     userMiddleware.validateDataDynamic(destiny.UPDATE_OR_FIND),
+    fileMiddlewares.checkAvatar,
     authMiddleware.validateToken(),
     userMiddleware.getUserByDynamicParam(paramName.user.EMAIL),
     userMiddleware.isUserPresent(!NEED_ITEM),

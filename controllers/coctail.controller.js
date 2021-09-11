@@ -22,7 +22,7 @@ module.exports = {
 
             await Coctail.deleteOne({ _id: coctailId });
 
-            res.status(statusCodes.DELETED).json(`coctail with id ${coctailId} is deleted`);
+            res.sendStatus(statusCodes.DELETED);
         } catch (e) {
             next(e);
         }

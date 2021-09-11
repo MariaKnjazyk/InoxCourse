@@ -36,9 +36,11 @@ module.exports = {
 
     changePassword: async (req, res, next) => {
         try {
-            const { loginUser, body: { password } } = req;
+            const { loginUser, body: { password, oldpassword } } = req;
 
-            await ActToken.findOneAndDelete({ [USER]: loginUser[_ID], action: actionEnum.FORGOT_PASSWORD });
+            if (!oldpassword) {
+                await ActToken.findOneAndDelete({ [USER]: loginUser[_ID], action: actionEnum.FORGOT_PASSWORD });
+            }
 
             const hashedPassword = await passwordService.hash(password);
 
@@ -78,7 +80,7 @@ module.exports = {
 
             await OAuth.deleteOne({ access_token });
 
-            res.status(statusCodes.DELETED).json('OK');
+            res.sendStatus(statusCodes.DELETED);
         } catch (e) {
             next(e);
         }
@@ -90,7 +92,7 @@ module.exports = {
 
             await OAuth.deleteMany({ [USER]: loginUser[_ID] });
 
-            res.status(statusCodes.DELETED).json('OK');
+            res.sendStatus(statusCodes.DELETED);
         } catch (e) {
             next(e);
         }

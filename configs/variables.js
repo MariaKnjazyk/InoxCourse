@@ -1,6 +1,10 @@
 module.exports = {
     ACCESS_SECRET_KEY: process.env.ACCESS_SECRET_KEY || 'SecretWord',
     ACTIVATE_ACCOUNT_SECRET_KEY: process.env.ACTIVATE_ACCOUNT_SECRET_KEY || 'WordSecret',
+    AWS_S3_NAME: process.env.AWS_S3_NAME || '',
+    AWS_S3_REGION: process.env.AWS_S3_REGION || '',
+    AWS_S3_ACCESS_KEY: process.env.AWS_S3_ACCESS_KEY || '',
+    AWS_S3_SECRET_KEY: process.env.AWS_S3_SECRET_KEY || '',
     FORGOT_PASSWORD_SECRET_KEY: process.env.FORGOT_PASSWORD_SECRET_KEY || 'Word',
     EMAIL_BROADCAST: process.env.EMAIL_BROADCAST || 'test@gmail.com',
     EMAIL_BROADCAST_PASS: process.env.EMAIL_BROADCAST_PASS || '12345',
