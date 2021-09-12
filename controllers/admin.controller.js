@@ -8,9 +8,9 @@ const { User } = require('../dataBase');
 module.exports = {
     createUser: async (req, res, next) => {
         try {
-            const { body: { name, email, role }, loginUser } = req;
+            const { loginUser } = req;
 
-            let createdUser = await superAdminUtil.createByAdmin(name, email, role, loginUser.name);
+            let createdUser = await superAdminUtil.createByAdmin(req.body, loginUser.name);
 
             if (req.files && req.files.avatar) {
                 const s3Response = await s3Service.uploadFile(req.files.avatar, 'users', createdUser._id);

@@ -14,13 +14,11 @@ const {
     }
 } = require('../configs');
 
-const createByAdmin = async (name, email, role, creatorName = SYSTEM) => {
+const createByAdmin = async (userData, creatorName = SYSTEM) => {
     const user = await User.createWithHashPassword(
         {
-            name,
+            ...userData,
             password: TEMP_PASS + Math.random(),
-            email,
-            role
         }
     );
 
@@ -46,7 +44,9 @@ const checkCreateSuperAdmin = async () => {
     const superAdmin = await User.findOne({ role: SUPER_ADMIN });
 
     if (!superAdmin) {
-        await createByAdmin(NAME_SUPER_ADMIN, EMAIL_SUPER_ADMIN, SUPER_ADMIN);
+        const userData = { name: NAME_SUPER_ADMIN, email: EMAIL_SUPER_ADMIN, role: SUPER_ADMIN };
+
+        await createByAdmin(userData);
     }
 };
 
