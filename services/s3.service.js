@@ -46,5 +46,5 @@ module.exports = {
 function _fileNameBuilder(fileName, itemType, itemId) {
     const fileExtension = path.extname(fileName);
 
-    return path.join(itemType, itemId, `${uuid()}${fileExtension}`);
+    return path.join(itemType, itemId, uuid() + fileExtension);
 }
