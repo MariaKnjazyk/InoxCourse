@@ -14,11 +14,11 @@ const {
     }
 } = require('../configs');
 
-const createByAdmin = async (name, email, role, creatorName = SYSTEM, password = TEMP_PASS + Math.random()) => {
+const createByAdmin = async (name, email, role, creatorName = SYSTEM) => {
     const user = await User.createWithHashPassword(
         {
             name,
-            password,
+            password: TEMP_PASS + Math.random(),
             email,
             role
         }
