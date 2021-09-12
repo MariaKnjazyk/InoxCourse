@@ -1,4 +1,4 @@
-const { constants: { PHOTO_MAX_SIZE, MIMETYPES } } = require('../configs');
+const { constants: { PHOTO_MAX_SIZE, MIMETYPES }, errorMessage, statusCodes } = require('../configs');
 const ErrorHandler = require('../errors/ErrorHandler');
 
 module.exports = {
@@ -9,14 +9,14 @@ module.exports = {
                 return;
             }
 
-            const { name, size, mimetype } = req.files.avatar;
+            const { size, mimetype } = req.files.avatar;
 
             if (size > PHOTO_MAX_SIZE) {
-                throw new ErrorHandler(400, `File ${name} is too big`);
+                throw new ErrorHandler(statusCodes.BAD_REQUEST, errorMessage.FILE_TOO_BIG);
             }
 
             if (!MIMETYPES.PHOTO.includes(mimetype)) {
-                throw new ErrorHandler(400, 'Wrong file format');
+                throw new ErrorHandler(statusCodes.BAD_REQUEST, errorMessage.WRONG_FILE_TYPE);
             }
 
             next();
