@@ -24,7 +24,5 @@ module.exports = (query) => {
         }
     }
 
-    console.log(searchBy);
-
     return searchBy;
 };
