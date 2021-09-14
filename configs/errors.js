@@ -45,6 +45,12 @@ module.exports = {
             customCode: 4031,
             status: 403
         },
+
+        CORS_NOT_ALLOWED: {
+            message: 'CORS not allowed',
+            customCode: 4032,
+            status: 403
+        }
     },
 
     INTERNAL_SERVER_ERROR: {

@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const {
+    errors,
     statusCodes,
     variables: { ALLOWED_ORIGIN, PORT, MONG_CONNECT }
 } = require('./configs');
@@ -80,7 +81,11 @@ function _configureCors(origin, callback) {
     }
 
     if (!whiteList.includes(origin)) {
-        return callback(new ErrorHandler(403, 'CORS not allowed'), false);
+        return callback(new ErrorHandler(
+            errors.FORBIDDEN.CORS_NOT_ALLOWED.status,
+            errors.FORBIDDEN.CORS_NOT_ALLOWED.customCode,
+            errors.FORBIDDEN.CORS_NOT_ALLOWED.message
+        ), false);
     }
 
     return callback(null, true);
