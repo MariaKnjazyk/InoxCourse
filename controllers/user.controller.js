@@ -7,7 +7,7 @@ const {
     variables: { FRONTEND_URL }
 } = require('../configs');
 const { ActToken, User } = require('../dataBase');
-const { userUtil } = require('../utils');
+const { queryBuilder, userUtil } = require('../utils');
 
 module.exports = {
     createUser: async (req, res, next) => {
@@ -59,7 +59,7 @@ module.exports = {
 
     getUsers: async (req, res, next) => {
         try {
-            const users = await User.find(req.query);
+            const users = await User.find(queryBuilder(req.query));
 
             const usersToReturn = users.map((user) => userUtil.userNormalizator(user));
 

@@ -8,6 +8,10 @@ const userSchema = new Schema({
         type: String
     },
 
+    born_year: {
+        type: Number,
+    },
+
     email: {
         trim: true,
         type: String,

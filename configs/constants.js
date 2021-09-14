@@ -2,6 +2,7 @@ module.exports = {
     AMAZONAWS: 'amazonaws.com/',
     AUTH: true,
     AUTHORIZATION: 'Authorization',
+    CURRENT_YEAR: new Date().getFullYear(),
     MIMETYPES: {
         PHOTO: [
             'image/jpeg',
