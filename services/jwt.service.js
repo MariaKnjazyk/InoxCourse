@@ -3,8 +3,7 @@ const jwt = require('jsonwebtoken');
 const {
     actionEnum,
     constants: { TOKEN_TYPE_ACCESS },
-    errorMessage,
-    statusCodes,
+    errors,
     variables: {
         ACCESS_SECRET_KEY,
         ACTIVATE_ACCOUNT_SECRET_KEY,
@@ -31,7 +30,11 @@ module.exports = {
 
             await jwt.verify(token, secret);
         } catch (e) {
-            throw new ErrorHandler(statusCodes.NOT_VALID_TOKEN, errorMessage.NOT_VALID_TOKEN);
+            throw new ErrorHandler(
+                errors.NOT_VALID_TOKEN.NOT_VALID_TOKEN.status,
+                errors.NOT_VALID_TOKEN.NOT_VALID_TOKEN.customCode,
+                errors.NOT_VALID_TOKEN.NOT_VALID_TOKEN.message
+            );
         }
     },
 
@@ -46,7 +49,11 @@ module.exports = {
         try {
             await jwt.verify(token, secretWord);
         } catch (e) {
-            throw new ErrorHandler(statusCodes.NOT_VALID_TOKEN, errorMessage.NOT_VALID_TOKEN);
+            throw new ErrorHandler(
+                errors.NOT_VALID_TOKEN.NOT_VALID_TOKEN.status,
+                errors.NOT_VALID_TOKEN.NOT_VALID_TOKEN.customCode,
+                errors.NOT_VALID_TOKEN.NOT_VALID_TOKEN.message
+            );
         }
     }
 };
@@ -62,7 +69,11 @@ function _getSecretWordForActionToken(actionType) {
             secretWord = ACTIVATE_ACCOUNT_SECRET_KEY;
             break;
         default:
-            throw new ErrorHandler(statusCodes.INTERNAL_SERVER_ERROR, errorMessage.WRONG_TOKEN_TYPE);
+            throw new ErrorHandler(
+                errors.INTERNAL_SERVER_ERROR.WRONG_TOKEN_TYPE.status,
+                errors.INTERNAL_SERVER_ERROR.WRONG_TOKEN_TYPE.customCode,
+                errors.INTERNAL_SERVER_ERROR.WRONG_TOKEN_TYPE.message
+            );
     }
 
     return secretWord;

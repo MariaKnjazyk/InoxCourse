@@ -1,8 +1,7 @@
 const {
     constants: { NEED_ITEM, AUTH },
     dataIn: { BODY },
-    errorMessage,
-    statusCodes,
+    errors,
     userRolesEnum: { USER }
 } = require('../configs');
 const { ErrorHandler } = require('../errors');
@@ -21,7 +20,11 @@ module.exports = {
             if (!rolesArr.length) return next();
 
             if (!rolesArr.includes(loginUser.role)) {
-                throw new ErrorHandler(statusCodes.FORBIDDEN, errorMessage.FORBIDDEN);
+                throw new ErrorHandler(
+                    errors.FORBIDDEN.FORBIDDEN.status,
+                    errors.FORBIDDEN.FORBIDDEN.customCode,
+                    errors.FORBIDDEN.FORBIDDEN.message
+                );
             }
 
             next();
@@ -39,7 +42,11 @@ module.exports = {
             if (!rolesArr.length) return next();
 
             if (!rolesArr.includes(role)) {
-                throw new ErrorHandler(statusCodes.BAD_REQUEST, errorMessage.WRONG_ROLE);
+                throw new ErrorHandler(
+                    errors.BAD_REQUEST.WRONG_ROLE.status,
+                    errors.BAD_REQUEST.WRONG_ROLE.customCode,
+                    errors.BAD_REQUEST.WRONG_ROLE.message
+                );
             }
 
             next();
@@ -71,13 +78,27 @@ module.exports = {
             const { user } = req;
 
             if (!user && isUserNeed) {
-                if (!auth) throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.NOT_FOUND);
+                if (!auth) {
+                    throw new ErrorHandler(
+                        errors.NOT_FOUND.NOT_FOUND.status,
+                        errors.NOT_FOUND.NOT_FOUND.customCode,
+                        errors.NOT_FOUND.NOT_FOUND.message
+                    );
+                }
 
-                throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.WRONG_PASSW_OR_EMAIL);
+                throw new ErrorHandler(
+                    errors.NOT_FOUND.WRONG_PASSW_OR_EMAIL.status,
+                    errors.NOT_FOUND.WRONG_PASSW_OR_EMAIL.customCode,
+                    errors.NOT_FOUND.WRONG_PASSW_OR_EMAIL.message
+                );
             }
 
             if (user && !isUserNeed) {
-                throw new ErrorHandler(statusCodes.CONFLICT, errorMessage.EXIST_EMAIL);
+                throw new ErrorHandler(
+                    errors.CONFLICT.EXIST_EMAIL.status,
+                    errors.CONFLICT.EXIST_EMAIL.customCode,
+                    errors.CONFLICT.EXIST_EMAIL.message
+                );
             }
 
             next();
@@ -91,7 +112,11 @@ module.exports = {
             const { error } = userValidator[destiny].validate(req[dataIn]);
 
             if (error) {
-                throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);
+                throw new ErrorHandler(
+                    errors.BAD_REQUEST.NOT_VALID_DATA.status,
+                    errors.BAD_REQUEST.NOT_VALID_DATA.customCode,
+                    error.details[0].message
+                );
             }
 
             next();

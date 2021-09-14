@@ -4,7 +4,7 @@ const {
     constants: { NEED_ITEM },
     databaseTablesEnum: { COCTAIL, USER },
     dataIn: { BODY },
-    errorMessage, statusCodes
+    errors,
 } = require('../configs');
 const { ErrorHandler } = require('../errors');
 
@@ -18,7 +18,11 @@ module.exports = {
             if (!rolesArr.length) return next();
 
             if (!rolesArr.includes(loginUser.role)) {
-                throw new ErrorHandler(statusCodes.FORBIDDEN, errorMessage.FORBIDDEN);
+                throw new ErrorHandler(
+                    errors.FORBIDDEN.FORBIDDEN.status,
+                    errors.FORBIDDEN.FORBIDDEN.customCode,
+                    errors.FORBIDDEN.FORBIDDEN.message
+                );
             }
 
             next();
@@ -32,11 +36,19 @@ module.exports = {
             const { coctail } = req;
 
             if (!coctail && isCoctailNeed) {
-                throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.NOT_FOUND);
+                throw new ErrorHandler(
+                    errors.NOT_FOUND.NOT_FOUND.status,
+                    errors.NOT_FOUND.NOT_FOUND.customCode,
+                    errors.NOT_FOUND.NOT_FOUND.message
+                );
             }
 
             if (coctail && !isCoctailNeed) {
-                throw new ErrorHandler(statusCodes.CONFLICT, errorMessage.EXIST_NAME);
+                throw new ErrorHandler(
+                    errors.CONFLICT.EXIST_NAME.status,
+                    errors.CONFLICT.EXIST_NAME.customCode,
+                    errors.CONFLICT.EXIST_NAME.message
+                );
             }
 
             req.coctail = coctail;
@@ -84,7 +96,11 @@ module.exports = {
             const { error } = coctailValidator[destiny].validate(req[dataIn]);
 
             if (error) {
-                throw new ErrorHandler(statusCodes.BAD_REQUEST, error.details[0].message);
+                throw new ErrorHandler(
+                    errors.BAD_REQUEST.NOT_VALID_DATA.status,
+                    errors.BAD_REQUEST.NOT_VALID_DATA.customCode,
+                    error.details[0].message
+                );
             }
 
             next();

@@ -7,6 +7,7 @@ module.exports = {
     dbFiled: require('./dbFiled'),
     destiny: require('./destiny'),
     emailActionsEnum: require('./emailActions.enum'),
+    errors: require('./errors'),
     errorMessage: require('./error.message'),
     paramName: require('./paramName'),
     regexes: require('./regexes'),

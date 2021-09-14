@@ -2,8 +2,7 @@ const {
     actionEnum,
     constants: { AUTHORIZATION, TOKEN_TYPE_ACCESS },
     databaseTablesEnum: { USER },
-    errorMessage,
-    statusCodes
+    errors
 } = require('../configs');
 const { ErrorHandler } = require('../errors');
 const { jwtService, passwordService } = require('../services');
@@ -17,7 +16,11 @@ module.exports = {
             const inactiveAcc = await ActToken.findOne({ [USER]: user._id, action: actionEnum.ACTIVATE_ACCOUNT });
 
             if (inactiveAcc) {
-                throw new ErrorHandler(statusCodes.NOT_FOUND, errorMessage.ACCOUNT_IS_NOT_ACTIVATED);
+                throw new ErrorHandler(
+                    errors.NOT_FOUND.ACCOUNT_IS_NOT_ACTIVATED.status,
+                    errors.NOT_FOUND.ACCOUNT_IS_NOT_ACTIVATED.customCode,
+                    errors.NOT_FOUND.ACCOUNT_IS_NOT_ACTIVATED.message
+                );
             }
 
             next();
@@ -43,7 +46,11 @@ module.exports = {
             const token = req.get(AUTHORIZATION);
 
             if (!token) {
-                throw new ErrorHandler(statusCodes.NOT_VALID_TOKEN, errorMessage.NO_TOKEN);
+                throw new ErrorHandler(
+                    errors.NOT_VALID_TOKEN.NO_TOKEN.status,
+                    errors.NOT_VALID_TOKEN.NO_TOKEN.customCode,
+                    errors.NOT_VALID_TOKEN.NO_TOKEN.message
+                );
             }
 
             await jwtService.verifyActionToken(token, action);
@@ -51,7 +58,11 @@ module.exports = {
             const tokenFromDB = await ActToken.findOne({ action_token: token, action });
 
             if (!tokenFromDB) {
-                throw new ErrorHandler(statusCodes.NOT_VALID_TOKEN, errorMessage.NOT_VALID_TOKEN);
+                throw new ErrorHandler(
+                    errors.NOT_VALID_TOKEN.NOT_VALID_TOKEN.status,
+                    errors.NOT_VALID_TOKEN.NOT_VALID_TOKEN.customCode,
+                    errors.NOT_VALID_TOKEN.NOT_VALID_TOKEN.message
+                );
             }
 
             req.loginUser = tokenFromDB[USER];
@@ -67,7 +78,11 @@ module.exports = {
             const token = req.get(AUTHORIZATION);
 
             if (!token) {
-                throw new ErrorHandler(statusCodes.NOT_VALID_TOKEN, errorMessage.NO_TOKEN);
+                throw new ErrorHandler(
+                    errors.NOT_VALID_TOKEN.NO_TOKEN.status,
+                    errors.NOT_VALID_TOKEN.NO_TOKEN.customCode,
+                    errors.NOT_VALID_TOKEN.NO_TOKEN.message
+                );
             }
 
             await jwtService.verifyToken(token, tokenType);
@@ -75,7 +90,11 @@ module.exports = {
             const tokenFromDB = await OAuth.findOne({ [tokenType]: token });
 
             if (!tokenFromDB) {
-                throw new ErrorHandler(statusCodes.NOT_VALID_TOKEN, errorMessage.NOT_VALID_TOKEN);
+                throw new ErrorHandler(
+                    errors.NOT_VALID_TOKEN.NOT_VALID_TOKEN.status,
+                    errors.NOT_VALID_TOKEN.NOT_VALID_TOKEN.customCode,
+                    errors.NOT_VALID_TOKEN.NOT_VALID_TOKEN.message
+                );
             }
 
             req.loginUser = tokenFromDB.user;

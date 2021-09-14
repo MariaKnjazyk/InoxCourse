@@ -8,7 +8,6 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const {
-    errorMessage,
     statusCodes,
     variables: { ALLOWED_ORIGIN, PORT, MONG_CONNECT }
 } = require('./configs');
@@ -47,7 +46,6 @@ app.use('/admin', adminRouter);
 app.use('/auth', authRouter);
 app.use('/coctails', coctailRouter);
 app.use('/users', userRouter);
-app.use('*', _notFoundError);
 app.use(_mainErrorHandler);
 
 (async () => {
@@ -63,16 +61,15 @@ app.listen(PORT, () => {
     cronJobs();
 });
 
-function _notFoundError(err, req, res, next) {
-    next({
-        status: err.status || statusCodes.NOT_FOUND,
-        message: err.message || errorMessage.NOT_FOUND
-    });
-}
-
 //  eslint-disable-next-line no-unused-vars
 function _mainErrorHandler(err, req, res, next) {
-    res.status(err.status || statusCodes.INTERNAL_SERVER_ERROR).json({ message: err.message });
+    res
+        .status(err.status || statusCodes.INTERNAL_SERVER_ERROR)
+        .json({
+            message: err.message || 'unknown error',
+            customCode: err.customCode,
+            data: err.data
+        });
 }
 
 function _configureCors(origin, callback) {

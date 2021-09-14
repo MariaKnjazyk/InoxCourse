@@ -5,8 +5,7 @@ const path = require('path');
 const templatesInfo = require('../email-templates');
 const {
     constants,
-    errorMessage,
-    statusCodes,
+    errors,
     variables
 } = require('../configs');
 const { ErrorHandler } = require('../errors');
@@ -30,7 +29,11 @@ const sendMail = async (userMail, emailAction, context = {}) => {
     context = { ...context, frontendURL: variables.FRONTEND_URL };
 
     if (!templateToSend) {
-        throw new ErrorHandler(statusCodes.INTERNAL_SERVER_ERROR, errorMessage.WRONG_TEMPLATE_NAME);
+        throw new ErrorHandler(
+            errors.INTERNAL_SERVER_ERROR.WRONG_TEMPLATE_NAME.status,
+            errors.INTERNAL_SERVER_ERROR.WRONG_TEMPLATE_NAME.customCode,
+            errors.INTERNAL_SERVER_ERROR.WRONG_TEMPLATE_NAME.message
+        );
     }
 
     const { templateName, subject } = templateToSend;
