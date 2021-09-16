@@ -1,4 +1,5 @@
 const { Coctail, CoctailCreator } = require('../dataBase');
+const { coctailService } = require('../services');
 const { databaseTablesEnum: { COCTAIL, USER }, statusCodes } = require('../configs');
 
 module.exports = {
@@ -30,9 +31,9 @@ module.exports = {
 
     getCoctail: async (req, res, next) => {
         try {
-            const coctails = await Coctail.find(req.query);
+            const response = await coctailService.getAll(req.query);
 
-            res.json(coctails);
+            res.json(response);
         } catch (e) {
             next(e);
         }

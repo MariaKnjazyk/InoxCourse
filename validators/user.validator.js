@@ -3,6 +3,7 @@ const Joi = require('joi');
 const {
     constants: { CURRENT_YEAR },
     regexes: { EMAIL_REGEXP, ID_REGEXP, PASSWORD_REGEXP },
+    orderByEnum,
     userRolesEnum
 } = require('../configs');
 
@@ -47,15 +48,27 @@ const id = Joi.object({
     userId: Joi.string().trim().regex(ID_REGEXP)
 });
 
-const updateOrFind = Joi.object({
+const update = Joi.object({
     born_year: Joi.number().integer().min(CURRENT_YEAR - 120).max(CURRENT_YEAR - 6),
+    email: Joi.string().trim().regex(EMAIL_REGEXP),
+    name: Joi.string().trim().alphanum()
+        .min(2)
+        .max(30),
+    role: Joi.string().valid(...Object.values(userRolesEnum)),
+});
+
+const find = Joi.object({
     born_year_from: Joi.number().integer().min(CURRENT_YEAR - 120).max(CURRENT_YEAR - 6),
     born_year_to: Joi.number().integer().min(CURRENT_YEAR - 120).max(CURRENT_YEAR - 6),
     email: Joi.string().trim().regex(EMAIL_REGEXP),
     name: Joi.string().trim().alphanum()
         .min(2)
         .max(30),
-    role: Joi.string().valid(...Object.values(userRolesEnum))
+    page: Joi.number().integer().min(1),
+    perPage: Joi.number().integer().min(1),
+    role: Joi.string().valid(...Object.values(userRolesEnum)),
+    order: Joi.string().valid(...Object.values(orderByEnum)),
+    sortBy: Joi.string()
 });
 
 module.exports = {
@@ -65,6 +78,7 @@ module.exports = {
     changePasswordReset,
     create,
     createByAdmin,
-    updateOrFind,
+    find,
+    update,
     id
 };

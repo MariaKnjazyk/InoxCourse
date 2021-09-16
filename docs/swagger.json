@@ -1,0 +1,315 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Documentation",
+    "version": "0.0.1",
+    "description": "Node.js"
+  },
+  "paths": {
+    "/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Get all users",
+        "operationId": "getAllUsers",
+        "parameters": [
+          {
+            "name": "perPage",
+            "in": "query",
+            "description": "How many items will be showed in one page",
+            "required": false,
+            "default": 20,
+            "type": "number"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number",
+            "required": false,
+            "default": 1,
+            "type": "number"
+          },
+          {
+            "name": "born_year_from",
+            "in": "query",
+            "description": "born year from",
+            "required": false,
+            "default": 1980,
+            "type": "number"
+          },
+          {
+            "name": "born_year_to",
+            "in": "query",
+            "description": "born year to",
+            "required": false,
+            "default": 2000,
+            "type": "number"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "customer name",
+            "required": false,
+            "default": "Maria",
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "customer email",
+            "required": false,
+            "default": "maria@test.com",
+            "type": "string"
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "description": "customer role",
+            "required": false,
+            "default": "user",
+            "type": "array",
+            "enum": ["user", "admin", "superAdmin"],
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "order",
+            "required": false,
+            "default": "asc",
+            "type": "array",
+            "enum": ["asc", "desc"]
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "sort By",
+            "required": false,
+            "default": "createdAt",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/singleUser"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/errorSchema"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Create user",
+        "operationId": "createUser",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "formData",
+            "description": "user name",
+            "required": true,
+            "default": "Maria",
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "description": "user email",
+            "required": true,
+            "default": "example@example.com",
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "description": "user password",
+            "required": true,
+            "default": "Pa$$w0rd",
+            "type": "string"
+          },
+          {
+            "name": "role",
+            "in": "formData",
+            "description": "user role",
+            "required": false,
+            "default": "user",
+            "type": "string"
+          },
+          {
+            "name": "born_year",
+            "in": "formData",
+            "description": "user born year",
+            "required": true,
+            "default": "1992",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created",
+            "schema": {
+              "$ref": "#/definitions/singleUser"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/errorSchema"
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/errorSchema"
+            }
+          }
+        }
+      }
+    },
+    "/auth": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "description": "Auth",
+        "operationId": "auth",
+        "parameters": [
+          {
+            "name": "password",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "default": "Pa$$$w0rd",
+            "description": "User password"
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "default": "example@example.com",
+            "description": "User email"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "auth successful",
+            "schema": {
+              "$ref": "#/definitions/singleUser"
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "schema": {
+              "$ref": "#/definitions/errorSchema"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/errorSchema"
+            }
+          }
+        }
+      }
+    },
+    "/auth/activate": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "authActivate",
+        "description": "Activate user account",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string",
+            "required": true,
+            "default": "access_token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account activated"
+          },
+          "400": {
+            "description": "bad request",
+            "schema": {
+              "$ref": "#/definitions/errorSchema"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/errorSchema"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "singleUser": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "description": "customer ID",
+          "type": "string",
+          "example": "228"
+        },
+        "born_year": {
+          "description": "customer born year",
+          "type": "number",
+          "example": "1992"
+        },
+        "name": {
+          "description": "customer name",
+          "type": "string",
+          "example": "Maria"
+        },
+        "email": {
+          "description": "customer email",
+          "type": "string",
+          "example": "example@example.com"
+        }
+      }
+    },
+    "errorSchema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "description": "status code",
+          "type": "number",
+          "example": 400
+        },
+        "message": {
+          "type": "string",
+          "example": "Email is not valid"
+        },
+        "data": {
+          "description": "data",
+          "type": "string",
+          "example": "fileName.jpg"
+        },
+        "customCode": {
+          "description": "Custom error",
+          "type": "number",
+          "example": 4001
+        }
+      }
+    }
+  }
+}

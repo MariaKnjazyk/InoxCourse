@@ -13,7 +13,7 @@ const {
 
 router.get(
     '/',
-    coctailMiddleware.validateDataDynamic(destiny.UPDATE_OR_FIND, dataIn.QUERY),
+    coctailMiddleware.validateDataDynamic(destiny.FIND, dataIn.QUERY),
     coctailController.getCoctail
 );
 router.post(
@@ -46,7 +46,7 @@ router.get(
 );
 router.put(
     '/:coctailId',
-    coctailMiddleware.validateDataDynamic(destiny.UPDATE_OR_FIND),
+    coctailMiddleware.validateDataDynamic(destiny.UPDATE),
     coctailMiddleware.getCoctailByDynamicParam(paramName.coctail.NAME),
     coctailMiddleware.isCoctailPresent(!NEED_ITEM),
     coctailMiddleware.getCoctailByDynamicParam(paramName.coctail.ID, dataIn.PARAMS, dbFiled._ID),

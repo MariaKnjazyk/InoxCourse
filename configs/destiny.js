@@ -5,6 +5,7 @@ module.exports = {
     CHANGE_PASSWORD_RESET: 'changePasswordReset',
     CREATE: 'create',
     CREATE_BY_ADMIN: 'createByAdmin',
+    FIND: 'find',
     ID: 'id',
-    UPDATE_OR_FIND: 'updateOrFind'
+    UPDATE: 'update'
 };

@@ -11,6 +11,7 @@ module.exports = {
     errorMessage: require('./error.message'),
     paramName: require('./paramName'),
     regexes: require('./regexes'),
+    orderByEnum: require('./orderBy.enum'),
     statusCodes: require('./status-codes'),
     userRolesEnum: require('./user-roles.enum'),
     variables: require('./variables')

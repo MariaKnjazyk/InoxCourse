@@ -13,7 +13,7 @@ const { authMiddleware, fileMiddlewares, userMiddleware } = require('../middlewa
 
 router.get(
     '/',
-    userMiddleware.validateDataDynamic(destiny.UPDATE_OR_FIND, dataIn.QUERY),
+    userMiddleware.validateDataDynamic(destiny.FIND, dataIn.QUERY),
     userController.getUsers
 );
 router.post(
@@ -49,7 +49,7 @@ router.get(
 );
 router.put(
     '/:userId',
-    userMiddleware.validateDataDynamic(destiny.UPDATE_OR_FIND),
+    userMiddleware.validateDataDynamic(destiny.UPDATE),
     fileMiddlewares.checkAvatar,
     authMiddleware.validateToken(),
     userMiddleware.getUserByDynamicParam(paramName.user.EMAIL),
